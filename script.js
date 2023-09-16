@@ -71,7 +71,7 @@ class Library {
 
     title.innerText = book.title;
     author.innerText = book.author;
-    pages.innerText = book.pages + " pages";
+    pages.innerText = book.pages;
     status.innerText = book.status;
 
     status.addEventListener("click", () => {
@@ -111,16 +111,18 @@ resetLibraryBtn.addEventListener("click", () => {
   }
 });
 
-addBtn.addEventListener("click", (event) => {
-  event.preventDefault();
+addBtn.addEventListener("click", () => {
+  checkBookDetails();
   const bookTitle = document.querySelector('input[id="title"]').value;
   const bookAuthor = document.querySelector('input[id="author"]').value;
-  const bookPages = document.querySelector('input[id="pages"]').value;
+  const bookPages =
+    document.querySelector('input[id="pages"]').value + " pages";
   const bookStatus = document.querySelector('input[id="status"]:checked').value;
 
   const bookExists = library.myLibrary.some((book) => book.title === bookTitle);
   if (bookExists) {
     alert("Book already exists!!");
+    clearForm();
   } else {
     const newBook = new Book(bookTitle, bookAuthor, bookPages, bookStatus);
     library.addBookToLibrary(newBook);
@@ -137,4 +139,44 @@ function clearForm() {
   document.querySelector('input[id="pages"]').value = null;
   document.querySelector('input[id="pages"]').value = null;
   document.querySelector('input[id="status"]').checked = false;
+}
+
+// Validation
+
+function checkBookDetails() {
+  const bookTitle = document.getElementById("title");
+  const bookAuthor = document.getElementById("author");
+  const bookPages = document.getElementById("pages");
+  const status = document.getElementById("status");
+
+  bookTitle.addEventListener("input", (event) => {
+    if (bookTitle.validity.valueMissing) {
+      bookTitle.validationMessage = "";
+      bookTitle.setCustomValidity("Book title is a must.");
+    } else {
+      bookTitle.setCustomValidity("");
+    }
+  });
+
+  bookAuthor.addEventListener("input", (event) => {
+    if (bookAuthor.validity.valueMissing) {
+      bookAuthor.setCustomValidity("Author name is also must.");
+    } else {
+      bookAuthor.setCustomValidity("");
+    }
+  });
+
+  bookPages.addEventListener("input", (event) => {
+    if (bookPages.validity.valueMissing) {
+      bookPages.setCustomValidity("Book page count is also must.");
+    } else if (bookPages.validity.rangeUnderflow) {
+      bookPages.setCustomValidity(
+        "Book is too short to be included in library, min 50 pages book"
+      );
+    } else {
+      bookPages.setCustomValidity("");
+    }
+  });
+
+  return true;
 }
