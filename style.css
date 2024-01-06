@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+body {
+  background-color: whitesmoke;
+}
+
 .navbar {
   margin: 20px;
   width: 75vw;
